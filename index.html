@@ -3,119 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>恋爱契约</title>
+    <title>恋爱契约 (极简版)</title>
     <style>
-        /* 1. 整体样式与浪漫背景 */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #ffeef8 0%, #ffdde1 100%); overflow: hidden; }
-        
-        /* 2. 卡片容器 */
-        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(255, 182, 193, 0.3); width: 360px; text-align: center; transition: all 0.3s ease; }
-        h2 { color: #ff6b81; margin-bottom: 25px; font-size: 24px; }
-        
-        /* 3. 输入框与按钮 */
-        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ffe0e6; border-radius: 10px; outline: none; font-size: 16px; transition: border 0.3s; }
-        input:focus { border-color: #ff6b81; }
-        button { width: 100%; padding: 12px; background: #ff6b81; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; transition: background 0.3s; margin-top: 5px; }
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #ffeef8; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(255, 182, 193, 0.3); width: 360px; text-align: center; }
+        h2 { color: #ff6b81; margin-bottom: 25px; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ffe0e6; border-radius: 10px; outline: none; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #ff6b81; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; }
         button:hover { background: #ff4766; }
-        .link { margin-top: 15px; font-size: 14px; color: #888; cursor: pointer; }
-        .link:hover { color: #ff6b81; text-decoration: underline; }
-
-        /* 4. 邀请码特殊样式 */
-        .invite-code { font-size: 32px; font-weight: bold; color: #ff4766; letter-spacing: 4px; margin: 20px 0; padding: 15px; background: #fff0f3; border-radius: 10px; border: 2px dashed #ff6b81; }
-        .copy-btn { background: #ff9a9e; margin-top: 10px; }
-        
-        /* 5. 隐藏页面的工具类 */
-        .hidden { display: none !important; }
-        
-        /* 6. 简单的撒花动画 */
-        .heart { position: fixed; font-size: 20px; animation: fall 3s linear forwards; pointer-events: none; z-index: 999; }
-        @keyframes fall { 0% { opacity: 1; transform: translateY(0) rotate(0deg); } 100% { opacity: 0; transform: translateY(100vh) rotate(360deg); } }
+        .msg { margin-top: 15px; color: #ff4766; font-weight: bold; min-height: 20px;}
     </style>
 </head>
 <body>
 
-    <!-- 页面1：登录/注册 -->
-    <div id="auth-page" class="card">
-        <h2 id="auth-title">欢迎回来</h2>
-        <input type="text" id="username" placeholder="请输入昵称">
-        <input type="password" id="password" placeholder="请输入密码">
-        <button onclick="handleAuth()">进入恋爱世界</button>
-        <div class="link" onclick="toggleAuthMode()">还没有账号？去注册</div>
+<div class="card">
+    <h2>恋爱契约</h2>
+    
+    <!-- 注册/生成邀请码 -->
+    <div id="register-section">
+        <input type="text" id="username" placeholder="输入你的昵称">
+        <button onclick="register()">生成我的邀请码</button>
     </div>
 
-    <!-- 页面2：我的邀请码 -->
-    <div id="invite-page" class="card hidden">
-        <h2>你的专属邀请码</h2>
-        <p style="color:#888; margin-bottom:10px;">把这个发给 TA，让 TA 来绑定你吧！</p>
-        <div class="invite-code" id="my-code">LOVE-8848</div>
-        <button class="copy-btn" onclick="copyCode()">一键复制邀请码</button>
-        <div class="link" onclick="showPage('contract-page')">我已经有了TA的码？去绑定</div>
-    </div>
-
-    <!-- 页面3：签订契约 -->
-    <div id="contract-page" class="card hidden">
-        <h2>签订恋爱契约</h2>
-        <input type="text" id="partner-code" placeholder="请输入 TA 的邀请码">
+    <!-- 签订契约 -->
+    <div id="contract-section" style="display: none;">
+        <p style="color:#888;">你的邀请码: <b id="my-code" style="color:#ff4766;"></b></p>
+        <input type="text" id="partner-code" placeholder="输入 TA 的邀请码">
         <button onclick="signContract()">确认签订契约 💍</button>
-        <div class="link" onclick="showPage('invite-page')">返回我的邀请码</div>
     </div>
 
-    <script>
-        // 状态变量：模拟当前是登录还是注册
-        let isLogin = true; 
+    <div id="msg" class="msg"></div>
+</div>
 
-        // 切换登录/注册模式
-        function toggleAuthMode() {
-            isLogin = !isLogin;
-            document.getElementById('auth-title').innerText = isLogin ? '欢迎回来' : '创建新账号';
-            document.querySelector('.link').innerText = isLogin ? '还没有账号？去注册' : '已有账号？去登录';
-        }
+<!-- ⚠️ 注意：你需要把下面这两个值换成你自己的 Supabase 配置 -->
+<script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-        // 处理登录/注册（模拟逻辑）
-        function handleAuth() {
-            const user = document.getElementById('username').value;
-            if (!user) { alert('请输入昵称哦！'); return; }
-            // 模拟生成一个随机邀请码
-            const code = 'LOVE-' + Math.floor(Math.random() * 9000 + 1000);
+    // 1. 初始化 Supabase (请替换成你自己的 URL 和 KEY)
+    const supabaseUrl = '你的_SUPABASE_URL';
+    const supabaseKey = '你的_SUPABASE_ANON_KEY';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // 2. 注册并生成邀请码
+    window.register = async function() {
+        const username = document.getElementById('username').value.trim();
+        const msgEl = document.getElementById('msg');
+        if (!username) { msgEl.innerText = '请输入昵称哦！'; return; }
+
+        // 随机生成一个邀请码
+        const code = 'LOVE-' + Math.floor(Math.random() * 9000 + 1000);
+        
+        // 存入 Supabase 数据库
+        const { error } = await supabase.from('users').insert([{ username, invite_code: code }]);
+        
+        if (error) {
+            msgEl.innerText = '注册失败: ' + error.message;
+        } else {
+            // 切换页面，显示邀请码
             document.getElementById('my-code').innerText = code;
-            showPage('invite-page');
+            document.getElementById('register-section').style.display = 'none';
+            document.getElementById('contract-section').style.display = 'block';
+            msgEl.innerText = '生成成功！快去发给 TA 吧~';
+        }
+    };
+
+    // 3. 签订契约
+    window.signContract = async function() {
+        const partnerCode = document.getElementById('partner-code').value.trim();
+        const myCode = document.getElementById('my-code').innerText;
+        const msgEl = document.getElementById('msg');
+
+        if (!partnerCode) { msgEl.innerText = '请输入 TA 的邀请码'; return; }
+
+        // 去数据库查对方的邀请码
+        const { data, error } = await supabase.from('users').select('id').eq('invite_code', partnerCode).single();
+
+        if (error || !data) {
+            msgEl.innerText = '邀请码无效，请检查！';
+            return;
         }
 
-        // 复制邀请码
-        function copyCode() {
-            const code = document.getElementById('my-code').innerText;
-            navigator.clipboard.writeText(code).then(() => { alert('复制成功！快去发给TA吧~'));
-        }
+        // 更新自己的数据库，绑定对方的ID
+        const { error: updateError } = await supabase.from('users').update({ partner_id: data.id }).eq('invite_code', myCode);
 
-        // 签订契约（触发撒花动画）
-        function signContract() {
-            const code = document.getElementById('partner-code').value;
-            if (!code) { alert('请输入对方的邀请码'); return; }
-            
-            // 触发满屏爱心
-            for (let i = 0; i < 30; i++) {
-                setTimeout(() => createHeart(), i * 50);
-            }
-            alert('🎉 契约达成！祝你们永远甜蜜！');
+        if (updateError) {
+            msgEl.innerText = '签订失败: ' + updateError.message;
+        } else {
+            msgEl.innerText = '🎉 契约达成！祝你们永远甜蜜！';
         }
-
-        // 页面切换逻辑
-        function showPage(pageId) {
-            document.querySelectorAll('.card').forEach(el => el.classList.add('hidden'));
-            document.getElementById(pageId).classList.remove('hidden');
-        }
-
-        // 生成爱心动画
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.className = 'heart';
-            heart.innerText = '❤️';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.top = '-20px';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 3000);
-        }
-    </script>
+    };
+</script>
 </body>
 </html>
