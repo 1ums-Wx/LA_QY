@@ -12,55 +12,100 @@
         p { color: #666; margin-bottom: 20px; line-height: 1.6; font-size: 14px; }
         input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px; text-align: center; outline: none; }
         input:focus { border-color: #ff6b6b; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #ff6b6b; color: white; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #ff6b6b; color: white; font-size: 16px; cursor: pointer; transition: 0.3s; margin-bottom: 10px;}
         button:hover { background: #ff5252; }
-        .contract-result { display: none; text-align: center; }
+        .link { color: #ff6b6b; cursor: pointer; font-size: 14px; margin-top: 10px; display: inline-block;}
+        .hidden { display: none !important; }
         .contract-result .title { font-size: 20px; color: #ff6b6b; margin-bottom: 15px; font-weight: bold; }
         .contract-result .content { text-align: left; color: #444; line-height: 1.8; margin-bottom: 20px; font-size: 15px; background: #fff9f9; padding: 20px; border-radius: 10px; border: 1px dashed #ff6b6b; }
         .stamp { color: #ff6b6b; border: 2px solid #ff6b6b; border-radius: 50%; display: inline-block; padding: 10px 20px; font-size: 18px; font-weight: bold; transform: rotate(-15deg); margin-top: 10px;}
-        .heart { position: absolute; color: #ff6b6b; font-size: 20px; animation: floatUp 2s infinite; opacity: 0; }
+        .heart { position: absolute; color: #ff6b6b; font-size: 20px; animation: floatUp 2s infinite; opacity: 0; pointer-events: none;}
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.5); opacity: 0; } }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 输入区域 -->
-        <div id="inputArea">
-            <h1>💍 创建恋爱契约</h1>
-            <input type="text" id="name1" placeholder="你的名字（如：小明）">
-            <input type="text" id="name2" placeholder="TA的名字（如：小红）">
-            <button onclick="generateContract()">生成甜蜜契约</button>
+        <!-- 1. 登录界面 -->
+        <div id="loginArea">
+            <h1>💍 欢迎回来</h1>
+            <input type="text" id="loginUser" placeholder="请输入账号">
+            <input type="password" id="loginPass" placeholder="请输入密码">
+            <button onclick="handleLogin()">登录</button>
+            <p>还没有账号？<span class="link" onclick="toggleAuth()">去注册</span></p>
         </div>
 
-        <!-- 展示结果区域 -->
-        <div id="resultArea" class="contract-result">
+        <!-- 2. 注册界面 -->
+        <div id="registerArea" class="hidden">
+            <h1>✨ 创建专属账号</h1>
+            <input type="text" id="regUser" placeholder="设置你的账号">
+            <input type="password" id="regPass" placeholder="设置你的密码">
+            <button onclick="handleRegister()">注册</button>
+            <p>已有账号？<span class="link" onclick="toggleAuth()">去登录</span></p>
+        </div>
+
+        <!-- 3. 契约界面 -->
+        <div id="contractArea" class="hidden contract-result">
             <div class="title">💍 恋爱契约书 💍</div>
-            <div class="content" id="contractContent"></div>
+            <p style="color:#ff6b6b; margin-bottom:15px;">当前登录：<b id="currentUser"></b></p>
+            <div class="content">
+                <p>一、双方承诺全心全意爱对方，绝不欺骗。</p>
+                <p>二、吵架不过夜，谁惹对方生气，必须主动道歉。</p>
+                <p>三、无论贫穷富贵，健康疾病，都永远在一起。</p>
+                <p>四、此契约自双方确认之日起，永久有效！</p>
+            </div>
             <div class="stamp">盖章生效</div>
-            <button onclick="location.reload()" style="margin-top: 20px; background: #ccc;">重新拟定</button>
+            <button onclick="logout()" style="margin-top: 20px; background: #ccc; color: #666;">退出登录</button>
         </div>
     </div>
 
     <script>
-        function generateContract() {
-            let n1 = document.getElementById('name1').value.trim();
-            let n2 = document.getElementById('name2').value.trim();
-            if (!n1 || !n2) { alert('请输入双方的名字哦~'); return; }
-
-            let html = `<p><b>${n1}</b> 与 <b>${n2}</b> 自愿签订此恋爱契约：</p>
-                        <p>一、双方承诺全心全意爱对方，绝不欺骗。</p>
-                        <p>二、吵架不过夜，谁惹对方生气，必须主动道歉。</p>
-                        <p>三、无论贫穷富贵，健康疾病，都永远在一起。</p>
-                        <p>四、此契约自双方确认之日起，永久有效！</p>`;
-            
-            document.getElementById('contractContent').innerHTML = html;
-            document.getElementById('inputArea').style.display = 'none';
-            document.getElementById('resultArea').style.display = 'block';
-            addHearts();
+        // 页面加载时检查登录状态
+        window.onload = function() {
+            const user = localStorage.getItem('loggedInUser');
+            if (user) showContract(user);
         }
 
-        // 添加爱心动画
-        function addHearts() {
+        // 切换登录/注册界面
+        function toggleAuth() {
+            document.getElementById('loginArea').classList.toggle('hidden');
+            document.getElementById('registerArea').classList.toggle('hidden');
+        }
+
+        // 注册逻辑
+        function handleRegister() {
+            const u = document.getElementById('regUser').value.trim();
+            const p = document.getElementById('regPass').value.trim();
+            if (!u || !p) return alert('账号和密码不能为空哦！');
+            
+            // 将账号密码存入浏览器的本地记忆
+            localStorage.setItem('user_' + u, p);
+            alert('注册成功！请登录');
+            toggleAuth();
+        }
+
+        // 登录逻辑
+        function handleLogin() {
+            const u = document.getElementById('loginUser').value.trim();
+            const p = document.getElementById('loginPass').value.trim();
+            const savedPass = localStorage.getItem('user_' + u);
+            
+            if (savedPass === p) {
+                localStorage.setItem('loggedInUser', u);
+                showContract(u);
+            } else {
+                alert('账号或密码错误！');
+            }
+        }
+
+        // 展示契约并播放动画
+        function showContract(username) {
+            document.getElementById('loginArea').classList.add('hidden');
+            document.getElementById('registerArea').classList.add('hidden');
+            document.getElementById('contractArea').classList.remove('hidden');
+            document.getElementById('currentUser').innerText = username;
+            
+            // 清除旧动画
+            document.querySelectorAll('.heart').forEach(h => h.remove());
             setInterval(() => {
                 let heart = document.createElement('div');
                 heart.className = 'heart';
@@ -70,6 +115,12 @@
                 document.body.appendChild(heart);
                 setTimeout(() => heart.remove(), 2000);
             }, 500);
+        }
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            location.reload();
         }
     </script>
 </body>
