@@ -71,24 +71,34 @@
             document.getElementById('registerArea').classList.toggle('hidden');
         }
 
-        // 注册逻辑
+        // 注册逻辑（增加重复注册检测）
         function handleRegister() {
             const u = document.getElementById('regUser').value.trim();
             const p = document.getElementById('regPass').value.trim();
             if (!u || !p) return alert('账号和密码不能为空哦！');
             
-            // 将账号密码存入浏览器的本地记忆
+            // 检查账号是否已经存在
+            if (localStorage.getItem('user_' + u)) {
+                return alert('该账号已被注册，请直接登录或更换账号！');
+            }
+            
+            // 存入浏览器本地记忆
             localStorage.setItem('user_' + u, p);
             alert('注册成功！请登录');
             toggleAuth();
         }
 
-        // 登录逻辑
+        // 登录逻辑（增加账号未注册检测）
         function handleLogin() {
             const u = document.getElementById('loginUser').value.trim();
             const p = document.getElementById('loginPass').value.trim();
             const savedPass = localStorage.getItem('user_' + u);
             
+            // 1. 先检查账号是否存在
+            if (!savedPass) {
+                return alert('该账号未注册，请先去注册哦！');
+            }
+            // 2. 账号存在，再检查密码
             if (savedPass === p) {
                 localStorage.setItem('loggedInUser', u);
                 showContract(u);
