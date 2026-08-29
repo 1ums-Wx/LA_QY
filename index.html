@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我们的恋爱契约</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'PingFang SC', sans-serif; background: #fff0f3; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2); max-width: 400px; width: 100%; text-align: center; position: relative; overflow: hidden; }
+        h1 { color: #ff6b6b; margin-bottom: 20px; font-size: 22px; }
+        p { color: #666; margin-bottom: 20px; line-height: 1.6; font-size: 14px; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px; text-align: center; outline: none; }
+        input:focus { border-color: #ff6b6b; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #ff6b6b; color: white; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #ff5252; }
+        .contract-result { display: none; text-align: center; }
+        .contract-result .title { font-size: 20px; color: #ff6b6b; margin-bottom: 15px; font-weight: bold; }
+        .contract-result .content { text-align: left; color: #444; line-height: 1.8; margin-bottom: 20px; font-size: 15px; background: #fff9f9; padding: 20px; border-radius: 10px; border: 1px dashed #ff6b6b; }
+        .stamp { color: #ff6b6b; border: 2px solid #ff6b6b; border-radius: 50%; display: inline-block; padding: 10px 20px; font-size: 18px; font-weight: bold; transform: rotate(-15deg); margin-top: 10px;}
+        .heart { position: absolute; color: #ff6b6b; font-size: 20px; animation: floatUp 2s infinite; opacity: 0; }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.5); opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 输入区域 -->
+        <div id="inputArea">
+            <h1>💍 创建恋爱契约</h1>
+            <input type="text" id="name1" placeholder="你的名字（如：小明）">
+            <input type="text" id="name2" placeholder="TA的名字（如：小红）">
+            <button onclick="generateContract()">生成甜蜜契约</button>
+        </div>
+
+        <!-- 展示结果区域 -->
+        <div id="resultArea" class="contract-result">
+            <div class="title">💍 恋爱契约书 💍</div>
+            <div class="content" id="contractContent"></div>
+            <div class="stamp">盖章生效</div>
+            <button onclick="location.reload()" style="margin-top: 20px; background: #ccc;">重新拟定</button>
+        </div>
+    </div>
+
+    <script>
+        function generateContract() {
+            let n1 = document.getElementById('name1').value.trim();
+            let n2 = document.getElementById('name2').value.trim();
+            if (!n1 || !n2) { alert('请输入双方的名字哦~'); return; }
+
+            let html = `<p><b>${n1}</b> 与 <b>${n2}</b> 自愿签订此恋爱契约：</p>
+                        <p>一、双方承诺全心全意爱对方，绝不欺骗。</p>
+                        <p>二、吵架不过夜，谁惹对方生气，必须主动道歉。</p>
+                        <p>三、无论贫穷富贵，健康疾病，都永远在一起。</p>
+                        <p>四、此契约自双方确认之日起，永久有效！</p>`;
+            
+            document.getElementById('contractContent').innerHTML = html;
+            document.getElementById('inputArea').style.display = 'none';
+            document.getElementById('resultArea').style.display = 'block';
+            addHearts();
+        }
+
+        // 添加爱心动画
+        function addHearts() {
+            setInterval(() => {
+                let heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerText = '❤️';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.bottom = '0';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 2000);
+            }, 500);
+        }
+    </script>
+</body>
+</html>
