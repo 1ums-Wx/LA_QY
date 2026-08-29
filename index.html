@@ -3,134 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我们的恋爱契约</title>
+    <title>恋爱契约</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'PingFang SC', sans-serif; background: #fff0f3; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2); max-width: 400px; width: 100%; text-align: center; position: relative; overflow: hidden; }
-        h1 { color: #ff6b6b; margin-bottom: 20px; font-size: 22px; }
-        p { color: #666; margin-bottom: 20px; line-height: 1.6; font-size: 14px; }
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px; text-align: center; outline: none; }
-        input:focus { border-color: #ff6b6b; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: #ff6b6b; color: white; font-size: 16px; cursor: pointer; transition: 0.3s; margin-bottom: 10px;}
-        button:hover { background: #ff5252; }
-        .link { color: #ff6b6b; cursor: pointer; font-size: 14px; margin-top: 10px; display: inline-block;}
+        body { font-family: 'PingFang SC', sans-serif; background: linear-gradient(135deg, #ffeef0 0%, #ffdde1 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); padding: 35px; border-radius: 24px; box-shadow: 0 15px 40px rgba(255, 107, 107, 0.15); max-width: 420px; width: 100%; text-align: center; position: relative; overflow: hidden; }
+        h1 { color: #ff6b6b; margin-bottom: 8px; font-size: 24px; }
+        .subtitle { color: #999; margin-bottom: 25px; font-size: 14px; }
+        input { width: 100%; padding: 14px 18px; border: 1.5px solid #eee; border-radius: 12px; margin-bottom: 15px; font-size: 15px; outline: none; transition: 0.3s; background: #fafafa; }
+        input:focus { border-color: #ff6b6b; background: #fff; box-shadow: 0 0 0 4px rgba(255,107,107,0.1); }
+        button { width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-bottom: 10px; letter-spacing: 1px;}
+        button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,107,107,0.3); }
+        .link { color: #ff6b6b; cursor: pointer; font-size: 14px; margin-top: 10px; display: inline-block; font-weight: 500;}
         .hidden { display: none !important; }
-        .contract-result .title { font-size: 20px; color: #ff6b6b; margin-bottom: 15px; font-weight: bold; }
-        .contract-result .content { text-align: left; color: #444; line-height: 1.8; margin-bottom: 20px; font-size: 15px; background: #fff9f9; padding: 20px; border-radius: 10px; border: 1px dashed #ff6b6b; }
-        .stamp { color: #ff6b6b; border: 2px solid #ff6b6b; border-radius: 50%; display: inline-block; padding: 10px 20px; font-size: 18px; font-weight: bold; transform: rotate(-15deg); margin-top: 10px;}
-        .heart { position: absolute; color: #ff6b6b; font-size: 20px; animation: floatUp 2s infinite; opacity: 0; pointer-events: none;}
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.5); opacity: 0; } }
+        
+        /* 邀请码展示样式 */
+        .code-box { background: #fff0f3; border: 2px dashed #ff6b6b; border-radius: 12px; padding: 15px; margin: 15px 0; font-size: 28px; font-weight: bold; color: #ff6b6b; letter-spacing: 4px; user-select: all; }
+        
+        /* 契约成功样式 */
+        .success-title { font-size: 22px; color: #ff6b6b; margin-bottom: 15px; font-weight: bold; }
+        .contract-text { text-align: left; color: #555; line-height: 1.9; margin-bottom: 20px; font-size: 15px; background: #fff9f9; padding: 20px; border-radius: 12px; border: 1px solid #ffe0e0; }
+        .stamp { color: #ff6b6b; border: 2px solid #ff6b6b; border-radius: 50%; display: inline-block; padding: 10px 20px; font-size: 16px; font-weight: bold; transform: rotate(-15deg); margin-top: 10px;}
+        .heart { position: fixed; color: #ff6b6b; font-size: 20px; animation: floatUp 3s infinite; opacity: 0; pointer-events: none;}
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100vh) scale(1.5); opacity: 0; } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 1. 登录界面 -->
-        <div id="loginArea">
-            <h1>💍 欢迎回来</h1>
-            <input type="text" id="loginUser" placeholder="请输入账号">
-            <input type="password" id="loginPass" placeholder="请输入密码">
-            <button onclick="handleLogin()">登录</button>
-            <p>还没有账号？<span class="link" onclick="toggleAuth()">去注册</span></p>
+    <div class="card">
+        <!-- 1. 首页：创建契约 -->
+        <div id="createArea">
+            <h1>💍 恋爱契约</h1>
+            <p class="subtitle">输入你的专属ID，生成邀请码发给TA</p>
+            <input type="text" id="userId" placeholder="请输入你的用户ID">
+            <button onclick="createInvite()">生成专属邀请码</button>
+            <p>已有邀请码？<span class="link" onclick="showSignArea()">去签订契约</span></p>
         </div>
 
-        <!-- 2. 注册界面 -->
-        <div id="registerArea" class="hidden">
-            <h1>✨ 创建专属账号</h1>
-            <input type="text" id="regUser" placeholder="设置你的账号">
-            <input type="password" id="regPass" placeholder="设置你的密码">
-            <button onclick="handleRegister()">注册</button>
-            <p>已有账号？<span class="link" onclick="toggleAuth()">去登录</span></p>
+        <!-- 2. 邀请码展示页 -->
+        <div id="inviteArea" class="hidden">
+            <h1>🎉 邀请码已生成</h1>
+            <p class="subtitle">请将下方邀请码复制发给TA</p>
+            <div class="code-box" id="inviteCode"></div>
+            <button onclick="copyCode()">一键复制邀请码</button>
+            <p><span class="link" onclick="showSignArea()">TA已收到？去签订契约</span></p>
         </div>
 
-        <!-- 3. 契约界面 -->
-        <div id="contractArea" class="hidden contract-result">
-            <div class="title">💍 恋爱契约书 💍</div>
-            <p style="color:#ff6b6b; margin-bottom:15px;">当前登录：<b id="currentUser"></b></p>
-            <div class="content">
+        <!-- 3. 签订契约页 -->
+        <div id="signArea" class="hidden">
+            <h1>✍️ 签订契约</h1>
+            <p class="subtitle">输入你的ID和TA给你的邀请码</p>
+            <input type="text" id="signUserId" placeholder="请输入你的用户ID">
+            <input type="text" id="signCode" placeholder="请输入邀请码">
+            <button onclick="signContract()">确认签订</button>
+            <p><span class="link" onclick="location.reload()">返回首页</span></p>
+        </div>
+
+        <!-- 4. 签订成功页 -->
+        <div id="successArea" class="hidden">
+            <div class="success-title">🎊 契约签订成功！🎊</div>
+            <div class="contract-text">
+                <p><b>甲方：</b><span id="userA"></span></p>
+                <p><b>乙方：</b><span id="userB"></span></p>
+                <hr style="border:none; border-top:1px dashed #eee; margin:10px 0;">
                 <p>一、双方承诺全心全意爱对方，绝不欺骗。</p>
                 <p>二、吵架不过夜，谁惹对方生气，必须主动道歉。</p>
                 <p>三、无论贫穷富贵，健康疾病，都永远在一起。</p>
                 <p>四、此契约自双方确认之日起，永久有效！</p>
             </div>
             <div class="stamp">盖章生效</div>
-            <button onclick="logout()" style="margin-top: 20px; background: #ccc; color: #666;">退出登录</button>
         </div>
     </div>
 
     <script>
-        // 页面加载时检查登录状态
-        window.onload = function() {
-            const user = localStorage.getItem('loggedInUser');
-            if (user) showContract(user);
+        // 切换页面函数
+        function showArea(areaId) {
+            document.querySelectorAll('.card > div').forEach(el => el.classList.add('hidden'));
+            document.getElementById(areaId).classList.remove('hidden');
         }
+        function showSignArea() { showArea('signArea'); }
 
-        // 切换登录/注册界面
-        function toggleAuth() {
-            document.getElementById('loginArea').classList.toggle('hidden');
-            document.getElementById('registerArea').classList.toggle('hidden');
-        }
-
-        // 注册逻辑（增加重复注册检测）
-        function handleRegister() {
-            const u = document.getElementById('regUser').value.trim();
-            const p = document.getElementById('regPass').value.trim();
-            if (!u || !p) return alert('账号和密码不能为空哦！');
+        // 1. 创建邀请码
+        function createInvite() {
+            const uid = document.getElementById('userId').value.trim();
+            if (!uid) return alert('请输入你的用户ID哦！');
             
-            // 检查账号是否已经存在
-            if (localStorage.getItem('user_' + u)) {
-                return alert('该账号已被注册，请直接登录或更换账号！');
+            // 生成6位大写字母+数字的邀请码
+            const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+            
+            // 将邀请码和创建者存入本地
+            localStorage.setItem('contract_' + code, uid);
+            document.getElementById('inviteCode').innerText = code;
+            showArea('inviteArea');
+        }
+
+        // 2. 复制邀请码
+        function copyCode() {
+            const code = document.getElementById('inviteCode').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('邀请码复制成功！快去发给TA吧~');
+            });
+        }
+
+        // 3. 签订契约
+        function signContract() {
+            const uid = document.getElementById('signUserId').value.trim();
+            const code = document.getElementById('signCode').value.trim().toUpperCase();
+            
+            if (!uid || !code) return alert('ID和邀请码都不能为空哦！');
+            
+            const creator = localStorage.getItem('contract_' + code);
+            if (!creator) {
+                return alert('邀请码不存在或已失效，请检查后重试！');
+            }
+            if (creator === uid) {
+                return alert('不能和自己签订契约哦，请输入对方的邀请码！');
             }
             
-            // 存入浏览器本地记忆
-            localStorage.setItem('user_' + u, p);
-            alert('注册成功！请登录');
-            toggleAuth();
+            // 签订成功，展示结果
+            document.getElementById('userA').innerText = creator;
+            document.getElementById('userB').innerText = uid;
+            showArea('successArea');
+            
+            // 清除邀请码（防止重复使用）
+            localStorage.removeItem('contract_' + code);
+            
+            // 启动爱心动画
+            startHearts();
         }
 
-        // 登录逻辑（增加账号未注册检测）
-        function handleLogin() {
-            const u = document.getElementById('loginUser').value.trim();
-            const p = document.getElementById('loginPass').value.trim();
-            const savedPass = localStorage.getItem('user_' + u);
-            
-            // 1. 先检查账号是否存在
-            if (!savedPass) {
-                return alert('该账号未注册，请先去注册哦！');
-            }
-            // 2. 账号存在，再检查密码
-            if (savedPass === p) {
-                localStorage.setItem('loggedInUser', u);
-                showContract(u);
-            } else {
-                alert('账号或密码错误！');
-            }
-        }
-
-        // 展示契约并播放动画
-        function showContract(username) {
-            document.getElementById('loginArea').classList.add('hidden');
-            document.getElementById('registerArea').classList.add('hidden');
-            document.getElementById('contractArea').classList.remove('hidden');
-            document.getElementById('currentUser').innerText = username;
-            
-            // 清除旧动画
-            document.querySelectorAll('.heart').forEach(h => h.remove());
+        // 爱心动画
+        function startHearts() {
             setInterval(() => {
                 let heart = document.createElement('div');
                 heart.className = 'heart';
                 heart.innerText = '❤️';
-                heart.style.left = Math.random() * 100 + '%';
+                heart.style.left = Math.random() * 100 + 'vw';
                 heart.style.bottom = '0';
                 document.body.appendChild(heart);
-                setTimeout(() => heart.remove(), 2000);
-            }, 500);
-        }
-
-        // 退出登录
-        function logout() {
-            localStorage.removeItem('loggedInUser');
-            location.reload();
+                setTimeout(() => heart.remove(), 3000);
+            }, 400);
         }
     </script>
 </body>
